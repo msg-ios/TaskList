@@ -8,6 +8,7 @@
 
 #import "TasksViewController.h"
 #import "Task.h"
+#import "TaskCell.h"
 
 @interface TasksViewController () <NSFetchedResultsControllerDelegate>
 @property NSFetchedResultsController *fetchedResultsController;
@@ -28,7 +29,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.title = NSLocalizedString(@"Tasks List", nil);
+    self.title = NSLocalizedString(@"Task List", nil);
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:@"Task"];
     fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"completedAt" ascending:NO]];
@@ -54,11 +55,13 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"TaskCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier]   ;
+    TaskCell *cell = (TaskCell *)[tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil)
+    {
+        NSArray *nib = [[NSBundle mainBundle] loadNibNamed:@"TaskCell" owner:self options:nil];
+        cell = [nib objectAtIndex:0];
     }
     
     [self configureCell:cell forRowAtIndexPath:indexPath];
@@ -68,8 +71,10 @@
 
 - (void)configureCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     Task *task = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    cell.textLabel.text = task.text;
-    cell.textLabel.textColor = [task isCompleted] ? [UIColor lightGrayColor] : [UIColor blackColor];
+    TaskCell *taskCell = (TaskCell *)cell;
+    taskCell.taskNameLabel.text = task.text;
+    taskCell.taskNameLabel.textColor = [task isCompleted] ? [UIColor lightGrayColor] : [UIColor blackColor];
+    taskCell.taskPhoto.image = [[UIImage alloc]initWithData:task.image];
 }
 
 #pragma mark - NSFetchedResultsControllerDelegate
@@ -179,9 +184,13 @@
     textField.text = nil;
     [textField resignFirstResponder];
     
+    UIImage *photo = self.photoView.image;
+    NSData *taskPhoto = UIImageJPEGRepresentation(photo, 1.0);
+    
     [self.managedObjectContext performBlock:^{
-        NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:@"Task"     inManagedObjectContext:self.managedObjectContext];
+        NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:@"Task" inManagedObjectContext:self.managedObjectContext];
         [managedObject setValue:text forKey:@"text"];
+        [managedObject setValue:taskPhoto forKey:@"image"];
         [self.managedObjectContext save:nil];
     }];
     

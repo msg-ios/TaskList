@@ -12,6 +12,7 @@
 
 @property NSString *text;
 @property NSDate *completedAt;
+@property NSData *image;
 
 @property (nonatomic, getter = isCompleted) BOOL completed;
 

@@ -9,5 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface TaskCell : UITableViewCell
+@property (strong, nonatomic) IBOutlet UILabel *taskNameLabel;
+@property (strong, nonatomic) IBOutlet UIImageView *taskPhoto;
 
 @end

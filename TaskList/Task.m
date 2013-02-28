@@ -11,6 +11,7 @@
 @implementation Task
 @dynamic text;
 @dynamic completedAt;
+@dynamic image;
 
 - (BOOL)isCompleted {
     return self.completedAt != nil;
