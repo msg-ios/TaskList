@@ -1,7 +1,7 @@
 #import "TaskListAPIClient.h"
 #import "AFJSONRequestOperation.h"
 
-static NSString * const kTaskListAPIBaseURLString = @"<# API Base URL #>";
+static NSString * const kTaskListAPIBaseURLString = @"http://desolate-cove-6374.herokuapp.com";
 
 @implementation TaskListAPIClient
 
